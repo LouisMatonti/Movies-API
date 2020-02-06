@@ -46,8 +46,10 @@ exports.getOneMovie = async (req, res) => {
 //Get Movies from a producer
 exports.getFiltered = async (req, res) => {
     try {
-        let movies = await db.Movie.find();
-        return res.status(200).json(movies);
+        if (req.query["producer"] != undefined) {
+            db.Movie.find(req.query, {_id, title, producer, releaseDate}).sort(releaseDate);
+            return res.status(200).json();
+        }
     } catch (err) {
         return res.status(400).json({
             message: 'Cannot find your movies',
@@ -59,11 +61,14 @@ exports.getFiltered = async (req, res) => {
 //Get Movies with oscar
 exports.getOscarMovies = async (req, res) => {
     try {
-        let movies = await db.Movie.find();
-        return res.status(200).json(movies);
+        if (req.query["isOscarWinner=false"] == true) {
+            db.Movie.find(req.query);
+            return res.status(200).json();
+        }
+        
     } catch (err) {
         return res.status(400).json({
-            message: 'Cannot find your movies',
+            message: 'Cannot find your movie',
             error: err
         });
     }
